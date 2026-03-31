@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxStay - Reserva de Hotéis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent: #404040;
+            --border: #333333;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-mode {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-card: #ffffff;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --accent: #e0e0e0;
+            --border: #d0d0d0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: var(--bg-secondary);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--text-secondary);
+        }
+
+        .category-menu {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+        }
+
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            border: 2px solid transparent;
+        }
+
+        .category-item:hover {
+            background-color: var(--bg-card);
+            border-color: var(--text-primary);
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+        }
+
+        .category-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .category-item:hover .category-label {
+            color: var(--text-primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: 2px solid var(--text-primary);
+            background-color: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--text-secondary);
+            border-color: var(--text-secondary);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(20deg);
+        }
+
+        /* Home Page Styles */
+        .home-hero {
+            height: 90vh;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .home-hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .home-hero-content p {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .home-hero-content .btn {
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            animation: fadeInUp 1.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .about-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .about-section h2 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 5rem;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .about-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--bg-secondary) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background-color: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .hotels-page {
+            display: none;
+        }
+
+        .hotels-page.active {
+            display: block;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            max-width: 900px;
+            margin: 2rem auto;
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px var(--shadow);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            grid-column: 1 / -1;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .hotel-card {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--bg-secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .hotel-info {
+            padding: 1.5rem;
+        }
+
+        .hotel-name {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .hotel-location {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .hotel-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: var(--text-secondary);
+        }
+
+        .hotel-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .price-night {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 8px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px var(--shadow);
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background-color: var(--accent);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--text-primary);
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-footer a {
+            color: var(--text-primary);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-welcome {
+            padding: 0.6rem 1.5rem;
+            background-color: var(--bg-card);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .home-hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .home-hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-section h2 {
+                font-size: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .nav-buttons {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo" onclick="showHome()">ELITE</div>
+            <div class="nav-menu">
+                <a class="nav-link" onclick="showHome()">Início</a>
+                <a class="nav-link" onclick="scrollToAbout()">Sobre Nós</a>
+                <a class="nav-link" onclick="showHotels()">Hotéis</a>
+                <a class="nav-link" onclick="scrollToAbout()">Contacto</a>
+            </div>
+            <div class="nav-buttons">
+                <button class="theme-toggle" onclick="toggleTheme()">☀️</button>
+                <div id="authButtons">
+                    <button class="btn" onclick="showLogin()">Login</button>
+                    <button class="btn btn-primary" onclick="showRegister()">Criar Conta</button>
+                </div>
+                <div id="userMenu" class="user-menu hidden">
+                    <span class="user-welcome">Olá, <span id="userName"></span></span>
+                    <button class="btn" onclick="logout()">Sair</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="homePage">
+        <section class="home-hero">
+            <div class="home-hero-content">
+                <h1>ELITE HOTELS</h1>
+                <p>A excelência em hospedagem ao seu alcance</p>
+                <button class="btn btn-primary" onclick="showHotels()">Explorar Hotéis</button>
+            </div>
+        </section>
+
+        <!-- Sobre nós -->
+        <section class="about-section" id="aboutSection">
+            <h2>Sobre Nós</h2>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <p>A <strong>ELITE HOTELS</strong> é mais do que uma plataforma de reservas - somos o seu parceiro de confiança para experiências de hospedagem inesquecíveis em todo o mundo.</p>
+                    <p>Fundada com a missão de conectar viajantes a acomodações de excelência, trabalhamos com uma seleção cuidadosa dos melhores hotéis, resorts e propriedades exclusivas em destinos de sonho.</p>
+                    <p>Com mais de 10 anos de experiência no mercado, garantimos o melhor serviço, os preços mais competitivos e uma experiência de reserva simples e segura.</p>
+                </div>
+                <div class="about-image">🏨</div>
+            </div>
+
+            <div class="about-content">
+                <div class="about-image">🌍</div>
+                <div class="about-text">
+                    <p>Acreditamos que cada viagem é única e especial. Por isso, oferecemos uma vasta gama de opções que se adequam a todos os estilos e orçamentos.</p>
+                    <p>Desde hotéis boutique charmosos a resorts de luxo à beira-mar, da tranquilidade das montanhas à agitação das grandes cidades - temos o lugar perfeito para si.</p>
+                    <p>A nossa equipa dedica-se a proporcionar um serviço personalizado, garantindo que cada detalhe da sua estadia seja perfeito.</p>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 4rem;">Porquê Escolher ELITE HOTELS?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3>Qualidade Garantida</h3>
+                    <p>Todos os nossos parceiros são cuidadosamente selecionados e avaliados para garantir os mais altos padrões de qualidade.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Melhores Preços</h3>
+                    <p>Garantimos os preços mais competitivos do mercado com a nossa política de melhor preço garantido.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Reserva Segura</h3>
+                    <p>Sistema de pagamento seguro e encriptado. Os seus dados estão sempre protegidos connosco.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📞</div>
+                    <h3>Apoio 24/7</h3>
+                    <p>A nossa equipa está disponível 24 horas por dia, 7 dias por semana para o ajudar em qualquer situação.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎁</div>
+                    <h3>Benefícios Exclusivos</h3>
+                    <p>Acesso a ofertas especiais, upgrades gratuitos e programas de fidelização para os nossos clientes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Avaliações Reais</h3>
+                    <p>Milhares de avaliações verificadas de clientes reais para o ajudar a fazer a escolha certa.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Hoteis -->
+    <div id="hotelsPage" class="hotels-page">
+        <section class="hero">
+            <h1>Encontre o Hotel Perfeito</h1>
+            <p>Milhares de hotéis ao redor do mundo esperando por você</p>
+            
+            <div class="search-bar">
+                <div class="input-group">
+                    <label>Destino</label>
+                    <input type="text" placeholder="Para onde vais?" id="destination">
+                </div>
+                <div class="input-group">
+                    <label>Check-in</label>
+                    <input type="date" id="checkin">
+                </div>
+                <div class="input-group">
+                    <label>Check-out</label>
+                    <input type="date" id="checkout">
+                </div>
+                <div class="input-group">
+                    <label>Hóspedes</label>
+                    <select id="guests">
+                        <option>1 Hóspede</option>
+                        <option>2 Hóspedes</option>
+                        <option>3 Hóspedes</option>
+                        <option>4+ Hóspedes</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary search-btn">Pesquisar Hotéis</button>
+            </div>
+        </section>
+
+        <div class="container">
+            <h2 style="margin-bottom: 1rem; font-size: 2rem;">Hotéis em Destaque</h2>
+            <div class="hotels-grid">
+                <div class="hotel-card">
+                    <div class="hotel-image">🏨</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Grand Palace Hotel</h3>
+                        <p class="hotel-location">Lisboa, Portugal</p>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★★</span>
+                            <span>5.0 (234 avaliações)</span>
+                        </div>
+                        <div class="hotel-price">
+                            €120 <span class="price-night">/noite</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Reservar Agora</button>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">🏙️</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Urban Suites</h3>
+                        <p class="hotel-location">Porto, Portugal</p>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★☆</span>
+                            <span>4.8 (189 avaliações)</span>
+                        </div>
+                        <div class="hotel-price">
+                            €95 <span class="price-night">/noite</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Reservar Agora</button>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">🌊</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Seaside Resort</h3>
+                        <p class="hotel-location">Algarve, Portugal</p>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★★</span>
+                            <span>4.9 (312 avaliações)</span>
+                        </div>
+                        <div class="hotel-price">
+                            €150 <span class="price-night">/noite</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Reservar Agora</button>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">🏔️</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Mountain Lodge</h3>
+                        <p class="hotel-location">Serra da Estrela, Portugal</p>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★☆</span>
+                            <span>4.7 (156 avaliações)</span>
+                        </div>
+                        <div class="hotel-price">
+                            €85 <span class="price-night">/noite</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Reservar Agora</button>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">🏰</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Historic Castle Inn</h3>
+                        <p class="hotel-location">Sintra, Portugal</p>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★★</span>
+                            <span>5.0 (278 avaliações)</span>
+                        </div>
+                        <div class="hotel-price">
+                            €180 <span class="price-night">/noite</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Reservar Agora</button>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">🌃</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">City Lights Hotel</h3>
+                        <p class="hotel-location">Coimbra, Portugal</p>
+                        <div class="hotel-rating">
+                            <span class="stars">★★★★☆</span>
+                            <span>4.6 (198 avaliações)</span>
+                        </div>
+                        <div class="hotel-price">
+                            €75 <span class="price-night">/noite</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Reservar Agora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('loginModal')">×</button>
+            <h2>Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+            </form>
+            <div class="modal-footer">
+                Não tem conta? <a onclick="switchToRegister()">Criar conta</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registo -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('registerModal')">×</button>
+            <h2>Criar Conta</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Senha</label>
+                    <input type="password" id="registerConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Criar Conta</button>
+            </form>
+            <div class="modal-footer">
+                Já tem conta? <a onclick="switchToLogin()">Fazer login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let users = {};
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const themeBtn = document.querySelector('.theme-toggle');
+            themeBtn.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+        }
+
+        function showHome() {
+            document.getElementById('homePage').style.display = 'block';
+            document.getElementById('hotelsPage').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showHotels() {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('hotelsPage').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function scrollToAbout() {
+            showHome();
+            setTimeout(() => {
+                document.getElementById('aboutSection').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function showLogin() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function showRegister() {
+            document.getElementById('registerModal').classList.add('active');
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function switchToRegister() {
+            closeModal('loginModal');
+            showRegister();
+        }
+
+        function switchToLogin() {
+            closeModal('registerModal');
+            showLogin();
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (users[email] && users[email].password === password) {
+                currentUser = users[email];
+                updateUIForLoggedInUser();
+                closeModal('loginModal');
+                alert('Login realizado com sucesso!');
+            } else {
+                alert('Email ou senha incorretos!');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+
+            if (users[email]) {
+                alert('Este email já está registrado!');
+                return;
+            }
+
+            users[email] = { name, email, password };
+            currentUser = users[email];
+            updateUIForLoggedInUser();
+            closeModal('registerModal');
+            alert('Conta criada com sucesso!');
+        }
+
+        function updateUIForLoggedInUser() {
+            document.getElementById('authButtons').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentUser.name.split(' ')[0];
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('authButtons').classList.remove('hidden');
+            document.getElementById('userMenu').classList.add('hidden');
+            alert('Logout realizado com sucesso!');
+        }
+
+        window.onclick = function(event) {
+            const loginModal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+            if (event.target === loginModal) {
+                closeModal('loginModal');
+            }
+            if (event.target === registerModal) {
+                closeModal('registerModal');
+            }
+        }
+    </script>
+</body>
+</html>
